@@ -1,0 +1,85 @@
+name:              RecommendationSystem
+version:           1.0
+Build-Type:        Simple
+cabal-version:     >= 1.2
+
+executable RecommendationSystemOptimized
+  main-is:         Main.hs
+  hs-source-dirs:  Optimized/src
+  build-depends:   base
+                   , text
+                   , aeson
+                   , zlib
+                   , random
+                   , vector
+                   , containers
+                   , bytestring
+                   , mtl
+
+  other-modules:   Data.Rating
+                   , Data.Config
+                   , FunkSVD.SerialEstimator
+                   , Randomizer.RandomUtils
+
+  ghc-options:   -Wall -O2 -rtsopts -threaded 
+
+executable RecommendationSystemOptimizedProfiling
+  main-is:         Main.hs
+  hs-source-dirs:  Optimized/src
+  build-depends:   base
+                   , text
+                   , aeson
+                   , zlib
+                   , random
+                   , vector
+                   , containers
+                   , bytestring
+                   , mtl
+
+  other-modules:   Data.Rating
+                   , Data.Config
+                   , FunkSVD.SerialEstimator
+                   , Randomizer.RandomUtils
+
+  ghc-options:   -Wall -O2 -rtsopts -prof -auto-all -caf-all -threaded
+
+executable RecommendationSystemInitialVersion
+  main-is:         Main.hs
+  hs-source-dirs:  InitialVersion/src
+  build-depends:   base
+                   , text
+                   , aeson
+                   , zlib
+                   , random
+                   , vector
+                   , containers
+                   , bytestring
+                   , mtl
+
+  other-modules:   Data.Rating
+                   , Data.Config
+                   , FunkSVD.SerialEstimator
+                   , Randomizer.RandomUtils
+
+  ghc-options:   -Wall -O2 -rtsopts -threaded 
+
+executable RecommendationSystemInitialVersionProfiling
+  main-is:         Main.hs
+  hs-source-dirs:  InitialVersion/src
+  build-depends:   base
+                   , text
+                   , aeson
+                   , zlib
+                   , random
+                   , vector
+                   , containers
+                   , bytestring
+                   , mtl
+
+  other-modules:   Data.Rating
+                   , Data.Config
+                   , FunkSVD.SerialEstimator
+                   , Randomizer.RandomUtils
+
+  ghc-options:   -Wall -O2 -rtsopts -prof -auto-all -caf-all -threaded
+
