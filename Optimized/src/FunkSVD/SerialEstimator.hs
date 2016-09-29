@@ -11,7 +11,11 @@ import qualified Data.Map.Strict as M
 
 import qualified Randomizer.RandomUtils as R
 
+import qualified Control.Monad.State.Strict as S
+
 import Data.Maybe (fromMaybe)
+
+import System.Random (getStdRandom, RandomGen)
 
 import Control.Monad.Reader
 
@@ -110,12 +114,12 @@ updateResiduals res dUv dIv = fmap f res
         (Just ua) = M.lookup u dUv
         (Just ia) = M.lookup i dIv
 
-runTillConvergenceIO :: Config -> FunkSVD -> IO FunkSVD
-runTillConvergenceIO config funkSVD =
+runTillConvergence :: RandomGen t => Config -> FunkSVD -> S.State t FunkSVD
+runTillConvergence config funkSVD =
   do
 
   let func (!dUv, !dIv) _ = do
-        shuffledResiduals <- R.shuffleVectorIO $ residuals funkSVD
+        shuffledResiduals <- R.shuffleVectorState $ residuals funkSVD
         return $ runIteration config (dUv, dIv) shuffledResiduals
 
   (dUv, dIv) <- foldM func (M.empty, M.empty) [1 .. (numIterations config)]
@@ -133,7 +137,7 @@ runFullEstimationIO ratings config =
 
   let func !funkSVD dim = do
         putStrLn $ "Working on dimension " ++ show dim
-        funkSVD' <- runTillConvergenceIO config funkSVD
+        funkSVD' <- getStdRandom $ S.runState $ runTillConvergence config funkSVD
         putStrLn $ "Average residuals = " ++ (show . globalMean abs) (residuals funkSVD')
         putStrLn $ "Residuals RMSE = " ++ show (sqrt (globalMean (**2) (residuals funkSVD')))
         putStrLn $ "Training RMSE = " ++ show (getRMSE trainingSet funkSVD')

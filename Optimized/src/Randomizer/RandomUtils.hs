@@ -5,17 +5,22 @@ module Randomizer.RandomUtils (
     , shuffleVectorIO
     , randomSplitIO
     , shuffleVectorIO'
+    , shuffleVectorState
   ) where
 
 import qualified System.Random as R
 import qualified Data.Vector.Generic.Mutable as GM
 import qualified Data.Vector as DV
+
 import Control.Monad (forM_, liftM)
 
 import Control.Monad.ST
 import Data.STRef
 
 import qualified Data.Map.Strict as M
+
+import qualified Control.Monad.State.Strict as S
+
 
 swap :: M.Map Int Int -> Int -> Int -> M.Map Int Int
 swap !imap !i !j = newMap
@@ -40,7 +45,7 @@ shuffleVector xs gen = (xs', gen')
     n = DV.length xs
 
 shuffleVectorST :: R.RandomGen t => DV.Vector a -> t -> (DV.Vector a, t)
-shuffleVectorST !xs gen = runST $ do
+shuffleVectorST xs gen = runST $ do
   g <- newSTRef gen
   let n = DV.length xs
       randomRST lohi = do
@@ -70,4 +75,6 @@ shuffleVectorIO' xs = R.getStdRandom (shuffleVector xs)
 randomSplitIO :: Int -> DV.Vector a -> IO (DV.Vector a, DV.Vector a)
 randomSplitIO n xs = liftM (DV.splitAt n) (shuffleVectorIO xs)
 
+shuffleVectorState :: R.RandomGen t => DV.Vector a -> S.State t (DV.Vector a)
+shuffleVectorState xs = S.state $ shuffleVectorST xs
 
