@@ -94,8 +94,10 @@ runIteration config = DV.foldl' f
         eps = r - ua * ia
         dua = lRate * (eps * ia - reg * ua)
         dia = lRate * (eps * ua - reg * ia)
-        uV' = ua' `seq` M.insert u (ua + dua) uV
-        iV' = ia' `seq` M.insert i (ia + dia) iV
+        ua' = ua + dua
+        ia' = ia + dia
+        uV' = ua' `seq` M.insert u ua' uV
+        iV' = ia' `seq` M.insert i ia' iV
 
 appendVectors :: Ord k => M.Map k (DV.Vector a) -> M.Map k a -> M.Map k (DV.Vector a)
 appendVectors v dv = M.mapWithKey f v
